@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arena Beach – Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="../css/modern.css">
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        body {
+            background: radial-gradient(circle at top right, var(--bg-tertiary) 0%, var(--bg-primary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .login-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 56px;
+            color: var(--accent);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .login-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            height: 48px;
+            font-size: 16px;
+        }
+
+        .form-control:focus {
+            background: var(--bg-primary);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.15);
+        }
+
+        .btn-login {
+            width: 100%;
+            height: 48px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--blue));
+            border: none;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 240, 255, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(1px);
+        }
+
+        /* Decorative bg elements */
+        .decoration-1 {
+            position: absolute;
+            top: -200px;
+            left: -200px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .decoration-2 {
+            position: absolute;
+            bottom: -250px;
+            right: -150px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(8, 112, 255, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="decoration-1"></div>
+    <div class="decoration-2"></div>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="login-logo">
+                <i class="ph-fill ph-beach-ball"></i>
+            </div>
+            <h1 class="login-title">Arena Beach</h1>
+            <p class="login-subtitle">Acesso ao Sistema de Gestão</p>
+
+            <div id="g_id_onload"
+                data-client_id="1001684908537-6uc9domktspnboaaka3th7vgeplpbct9.apps.googleusercontent.com"
+                data-context="signin" data-ux_mode="popup" data-callback="handleGoogleLogin" data-auto_prompt="false">
+            </div>
+
+            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
+                data-text="signin_with" data-size="large" data-logo_alignment="left"
+                style="margin-bottom: 20px; display: flex; justify-content: center;">
+            </div>
+
+            <div class="divider"
+                style="text-align: center; margin-bottom: 20px; color: var(--text-secondary); font-size: 0.9rem;">
+                <span>ou entrar com usuário</span>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Usuário</label>
+                    <div style="position: relative;">
+                        <i class="ph ph-user"
+                            style="position: absolute; left: 14px; top: 16px; color: var(--text-muted); font-size: 18px;"></i>
+                        <input type="text" id="username" class="form-control" style="padding-left: 42px;"
+                            placeholder="Digite seu usuário" required autofocus>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Senha</label>
+                    <div style="position: relative;">
+                        <i class="ph ph-lock-key"
+                            style="position: absolute; left: 14px; top: 16px; color: var(--text-muted); font-size: 18px;"></i>
+                        <input type="password" id="password" class="form-control" style="padding-left: 42px;"
+                            placeholder="Digite sua senha" required>
+                    </div>
+                </div>
+
+                <div id="errorMsg"
+                    style="color: var(--danger); font-size: 14px; display: none; margin-bottom: 15px; background: rgba(255,48,79,0.1); padding: 10px; border-radius: var(--radius-sm); border: 1px solid rgba(255,48,79,0.2);">
+                    Usuário ou senha incorretos.
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-login" id="loginBtn">Entrar no Sistema</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        const API = window.location.origin.includes('localhost:5151') ? '/api' : 'http://localhost:5151/api';
+
+        // If already logged in, go to dashboard
+        if (localStorage.getItem('arena_token')) {
+            window.location.href = 'index.html';
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            const err = document.getElementById('errorMsg');
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+
+            btn.innerHTML = '<div class="loader" style="width:20px;height:20px;border-width:2px;margin:auto"></div>';
+            btn.disabled = true;
+            err.style.display = 'none';
+
+            try {
+                // use standard fetch skipping the auth interceptor since we don't have token yet
+                const res = await window.fetch(`${API}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+
+                if (!res.ok) {
+                    throw new Error('Credenciais inválidas');
+                }
+
+                const data = await res.json();
+                
+                // Save token and user details
+                localStorage.setItem('arena_token', data.token);
+                localStorage.setItem('arena_user', JSON.stringify({ name: data.name, username: data.username, role: data.role }));
+                localStorage.setItem('arena_permissions', JSON.stringify(data.permissions || []));
+
+                // Redirect to dashboard
+                window.location.href = 'index.html';
+            } catch (error) {
+                err.textContent = error.message;
+                err.style.display = 'block';
+                btn.innerHTML = 'Entrar no Sistema';
+                btn.disabled = false;
+            }
+        }
+
+        // Google Sign-In Callback
+        async function handleGoogleLogin(response) {
+            const credential = response.credential;
+            const err = document.getElementById('errorMsg');
+            const submitBtn = document.getElementById('loginBtn');
+
+            err.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Autenticando pelo Google...';
+
+            try {
+                const res = await window.fetch(`${API}/auth/google-login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ credential })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('arena_token', data.token);
+                    localStorage.setItem('arena_user', JSON.stringify({ name: data.name, role: data.role }));
+                    localStorage.setItem('arena_permissions', JSON.stringify(data.permissions));
+                    window.location.href = 'index.html';
+                } else {
+                    const errorObj = await res.json();
+                    err.textContent = errorObj.message || 'Falha no login com Google.';
+                    err.style.display = 'block';
+                }
+            } catch (error) {
+                console.error(error);
+                err.textContent = 'Erro de conexão com o servidor.';
+                err.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Entrar no Sistema';
+            }
+        }
+    </script>
+</body>
+
+</html>
+

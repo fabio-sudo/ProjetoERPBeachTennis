@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arena Beach – Central de Mensalidades</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="../css/modern.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon"><i class="ph-fill ph-beach-ball"></i></div>
+                <div>
+                    <h2>Arena Beach</h2><span>Gestão Esportiva</span>
+                </div>
+            </div>
+                        <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-label">Principal</div>
+                    <a href="index.html" class="nav-item"><span class="nav-icon"><i class="ph ph-chart-line-up"></i></span> Dashboard</a>
+                    <a href="students.html" class="nav-item"><span class="nav-icon"><i class="ph ph-graduation-cap"></i></span> Alunos</a>
+                    <a href="customers.html" class="nav-item"><span class="nav-icon"><i class="ph ph-users"></i></span> Clientes</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Quadras</div>
+                    <a href="courts.html" class="nav-item"><span class="nav-icon"><i class="ph ph-map-pin"></i></span> Quadras</a>
+                    <a href="schedule.html" class="nav-item"><span class="nav-icon"><i class="ph ph-calendar-check"></i></span> Agendamentos</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Financeiro</div>
+                    <a href="payments.html" class="nav-item active"><span class="nav-icon"><i class="ph ph-money"></i></span> Mensalidades</a>
+                    <a href="sales_history.html" class="nav-item"><span class="nav-icon"><i class="ph ph-receipt"></i></span> Histórico de Pagamentos</a>
+                    <a href="reports.html" class="nav-item"><span class="nav-icon"><i class="ph ph-chart-pie-slice"></i></span> Relatórios Financeiros</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Bar / PDV</div>
+                    <a href="bar.html" class="nav-item"><span class="nav-icon"><i class="ph ph-beer-stein"></i></span> PDV / Caixa</a>
+                    <a href="tabs.html" class="nav-item"><span class="nav-icon"><i class="ph ph-clipboard-text"></i></span> Comandas</a>
+                    <a href="cash_register.html" class="nav-item"><span class="nav-icon"><i class="ph ph-cash-register"></i></span> Caixa Diário</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Estoque</div>
+                    <a href="inventory.html" class="nav-item"><span class="nav-icon"><i class="ph ph-package"></i></span> Estoque</a>
+                    <a href="purchase_orders.html" class="nav-item"><span class="nav-icon"><i class="ph ph-truck"></i></span> Pedidos de Compra</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Admin</div>
+                    <a href="admin.html" class="nav-item"><span class="nav-icon"><i class="ph ph-gear"></i></span> Controle de Acesso</a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <button onclick="auth.logout()" class="btn btn-ghost" style="width:100%;color:var(--danger);display:flex;align-items:center;justify-content:center;gap:8px"><i class="ph ph-sign-out"></i> Sair</button>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <div class="main">
+            <header class="topbar">
+                <div class="flex items-center gap-3">
+                    <button class="mobile-toggle" onclick="openSidebar()"><i class="ph ph-list"></i></button>
+                    <h1>Central de Mensalidades</h1>
+                </div>
+            </header>
+            <div class="page-content">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title">Gerenciar Mensalidades</div>
+                        <div class="page-subtitle" id="totalCount">Carregando...</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal()">+ Lançar Avulso</button>
+                </div>
+
+                <div class="card">
+                    <div class="filter-bar">
+                        <input type="text" id="searchInput" class="search-input"
+                            placeholder="Buscar por aluno..." oninput="filterPayments()">
+                        <select id="statusFilter" class="form-control" style="width:auto" onchange="filterPayments()">
+                            <option value="">Todos os Status</option>
+                            <option value="Paid">Pago</option>
+                            <option value="Pending">Pendente</option>
+                            <option value="Overdue">Atrasado</option>
+                            <option value="Cancelled">Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cód.</th>
+                                    <th>Vencimento</th>
+                                    <th>Aluno</th>
+                                    <th>Plano</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                    <th>Data Pgto</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTable">
+                                <tr>
+                                    <td colspan="8">
+                                        <div class="loader">
+                                            <div class="spinner"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        
+
+        <!-- Receive Payment Modal -->
+    <div class="modal-overlay" id="paymentMethodOverlay">
+        <div class="modal" style="max-width:420px">
+            <div class="modal-header">
+                <span class="modal-title">Receber Mensalidade</span>
+                <button class="modal-close" onclick="closePaymentMethodModal()"><i class="ph ph-x"></i></button>
+            </div>
+            
+            <div style="margin-bottom:16px;padding:14px;background:var(--bg-tertiary);border-radius:var(--radius-sm);text-align:center">
+                <div style="font-size:12px;color:var(--text-muted)">Total a Pagar</div>
+                <div style="font-size:32px;font-weight:800;color:var(--accent)" id="paymentAmountDisplay">R$ 0,00</div>
+                <div style="margin-top: 8px; font-size: 13px; color: var(--text-secondary);">
+                    <span id="payStudentName"></span> - <span id="payPlanName"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Forma de Pagamento</label>
+                <div class="flex gap-2" style="flex-wrap:wrap">
+                    <button class="btn btn-ghost pay-type" data-pay="Dinheiro" onclick="selectPayType(this)"><i class="ph ph-money"></i> Dinheiro</button>
+                    <button class="btn btn-ghost pay-type" data-pay="Cartão de Crédito" onclick="selectPayType(this)"><i class="ph ph-credit-card"></i> Crédito</button>
+                    <button class="btn btn-ghost pay-type" data-pay="Cartão de Débito" onclick="selectPayType(this)"><i class="ph ph-credit-card"></i> Débito</button>
+                    <button class="btn btn-ghost pay-type" data-pay="Pix" onclick="selectPayType(this)"><i class="ph ph-lightning"></i> PIX</button>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-ghost" onclick="closePaymentMethodModal()">Cancelar</button>
+                <button class="btn btn-success" id="confirmPayBtn" onclick="confirmProcessPayment()" disabled>Confirmar Pagamento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Payment Modal -->
+    <div class="modal-overlay" id="cancelPaymentOverlay">
+        <div class="modal" style="max-width:400px">
+            <div class="modal-header">
+                <span class="modal-title" style="color:var(--red)">Cancelar Mensalidade</span>
+                <button class="modal-close" onclick="closeCancelModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <p style="color:var(--text-secondary); margin-bottom: 15px; font-size:13px">
+                    Tem certeza que deseja cancelar esta fatura? Por favor, informe o motivo do cancelamento para registro.
+                </p>
+                <div class="form-group">
+                    <label class="form-label">Motivo do Cancelamento *</label>
+                    <textarea id="cancelReasonInput" class="form-control" rows="3" placeholder="Ex: Aluno desistiu, Cobrança duplicada..."></textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-ghost" onclick="closeCancelModal()">Voltar</button>
+                <button class="btn btn-danger" onclick="confirmCancelPayment()"><i class="ph ph-trash"></i> Cancelar Fatura</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form for Create/Edit -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title" id="modalTitle">Lançar Mensalidade</span>
+                <button class="modal-close" onclick="closeModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <form id="paymentForm" onsubmit="savePayment(event)">
+                <input type="hidden" id="pId">
+                
+                <div class="form-group" id="studentSelectWrapper">
+                    <label class="form-label">Aluno *</label>
+                    <select id="pStudent" class="form-control" required>
+                        <option value="">Carregando alunos...</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Valor (R$) *</label>
+                        <input id="pAmount" type="number" step="0.01" class="form-control" required placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Vencimento *</label>
+                        <input id="pDueDate" type="date" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Salvar Lançamento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="../js/auth.js"></script>
+    <script>
+        const API = '';
+        let payments = [], students = [], editingId = null;
+
+        function toast(msg, type = 'info') {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div'); t.className = `toast ${type}`;
+            t.innerHTML = `<i class="ph-bold ${type === 'success' ? 'ph-check-circle' : type === 'error' ? 'ph-x-circle' : 'ph-info'}"></i><span>${msg}</span>`;
+            c.appendChild(t); setTimeout(() => t.remove(), 4000);
+        }
+        function openSidebar() { document.getElementById('sidebar').classList.add('mobile-open'); document.getElementById('sidebarOverlay').classList.add('visible'); }
+        function closeSidebar() { document.getElementById('sidebar').classList.remove('mobile-open'); document.getElementById('sidebarOverlay').classList.remove('visible'); }
+
+        async function openModal(id = null) {
+            editingId = id;
+            document.getElementById('modalTitle').textContent = id ? 'Alterar Mensalidade' : 'Lançar Mensalidade';
+            document.getElementById('paymentForm').reset();
+            document.getElementById('pId').value = '';
+            
+            if (students.length === 0) await loadStudentsForSelect();
+
+            const studentDropdown = document.getElementById('pStudent');
+
+            if (id) {
+                const p = payments.find(x => x.id === id);
+                if (p) {
+                    document.getElementById('pId').value = p.id;
+                    document.getElementById('pAmount').value = p.amount;
+                    document.getElementById('pDueDate').value = p.dueDate;
+                    
+                    // Se for edição, vamos bloquear a escolha do aluno (mostra apenas como read-only)
+                    studentDropdown.innerHTML = `<option value="">${p.studentName}</option>`;
+                    studentDropdown.disabled = true;
+                }
+            } else {
+                studentDropdown.disabled = false;
+                populateStudentsSelect();
+            }
+            document.getElementById('modalOverlay').classList.add('open');
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+        async function loadStudentsForSelect() {
+            try {
+                students = await fetch(`${API}/api/students`).then(r => r.json());
+            } catch (e) { toast('Erro ao carregar alunos para dropdown', 'error'); }
+        }
+
+        function populateStudentsSelect() {
+            const select = document.getElementById('pStudent');
+            select.innerHTML = '<option value="">Selecione o Aluno...</option>' + 
+                students.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+        }
+
+        function getStatusBadge(status) {
+            if (status === 'Paid') return '<span class="badge badge-green">Pago</span>';
+            if (status === 'Pending') return '<span class="badge badge-yellow">Pendente</span>';
+            if (status === 'Overdue') return '<span class="badge badge-red">Atrasado</span>';
+            if (status === 'Cancelled') return '<span class="badge badge-gray">Cancelado</span>';
+            return `<span class="badge badge-gray">${status}</span>`;
+        }
+
+        async function loadPayments() {
+            try {
+                payments = await fetch(`${API}/api/payments`).then(r => r.json());
+                filterPayments();
+            } catch (e) { toast('Erro ao carregar mensalidades', 'error'); }
+        }
+
+        function renderPayments(list) {
+            document.getElementById('totalCount').textContent = `${list.length} faturas encontradas`;
+            const tbody = document.getElementById('paymentsTable');
+            if (!list.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-muted)">Nenhuma fatura encontrada.</td></tr>'; return; }
+            
+            tbody.innerHTML = list.map(p => {
+                let actionsHTML = '';
+                if(p.status === 'Pending' || p.status === 'Overdue') {
+                    actionsHTML += `<button class="btn btn-primary btn-sm" onclick="openPaymentMethodModal(${p.id})" title="Receber Mensalidade"><i class="ph ph-check-circle"></i></button>`;
+                    actionsHTML += `<button class="btn btn-ghost btn-sm" onclick="openModal(${p.id})" title="Alterar Valor/Data"><i class="ph ph-pencil"></i></button>`;
+                }
+                if(p.status !== 'Cancelled') {
+                    actionsHTML += `<button class="btn btn-danger btn-sm" onclick="openCancelModal(${p.id})" title="Cancelar Mês"><i class="ph ph-x-circle"></i></button>`;
+                }
+
+                return `
+                <tr>
+                  <td>#${p.id}</td>
+                  <td style="font-weight:600">${p.dueDate}</td>
+                  <td>${p.studentName}</td>
+                  <td>${p.planName}</td>
+                  <td style="color:var(--green);font-weight:700">R$ ${p.amount.toFixed(2)}</td>
+                  <td>${getStatusBadge(p.status)}</td>
+                  <td>${p.paymentDate || '-'}</td>
+                  <td class="flex gap-2" style="white-space: nowrap;">
+                    ${actionsHTML}
+                  </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function filterPayments() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            renderPayments(payments.filter(p =>
+                (!q || p.studentName.toLowerCase().includes(q)) &&
+                (!status || p.status === status)
+            ));
+        }
+
+        async function savePayment(e) {
+            e.preventDefault();
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true; btn.textContent = 'Salvando...';
+            
+            const id = document.getElementById('pId').value;
+            let body = {
+                amount: parseFloat(document.getElementById('pAmount').value),
+                dueDate: document.getElementById('pDueDate').value
+            };
+
+            try {
+                let url, method;
+                if (id) {
+                    // Update Request
+                    url = `${API}/api/payments/${id}`;
+                    method = 'PUT';
+                } else {
+                    // Create Request
+                    url = `${API}/api/payments/manual`;
+                    method = 'POST';
+                    body.studentId = parseInt(document.getElementById('pStudent').value);
+                }
+
+                const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                if (!res.ok) throw new Error(await res.text());
+                
+                toast(id ? 'Mensalidade atualizada!' : 'Mensalidade lançada com sucesso!', 'success');
+                closeModal(); 
+                loadPayments();
+            } catch (err) { 
+                toast('Erro: ' + err.message, 'error'); 
+            }
+            finally { btn.disabled = false; btn.textContent = 'Salvar Lançamento'; }
+        }
+
+        let pendingPaymentId = null;
+        let pendingCancelId = null;
+        let selectedPayType = '';
+
+        function selectPayType(btn) {
+            document.querySelectorAll('.pay-type').forEach(b => b.className = 'btn btn-ghost pay-type');
+            btn.classList.add('btn-primary');
+            selectedPayType = btn.dataset.pay;
+            document.getElementById('confirmPayBtn').disabled = false;
+        }
+
+        function openPaymentMethodModal(paymentId) {
+            const p = payments.find(x => x.id === paymentId);
+            if(!p) return;
+            pendingPaymentId = paymentId;
+            document.getElementById('payStudentName').innerText = p.studentName;
+            document.getElementById('payPlanName').innerText = p.planName;
+            document.getElementById('paymentAmountDisplay').innerText = 'R$ ' + p.amount.toFixed(2).replace('.', ',');
+            
+            selectedPayType = ''; 
+            document.getElementById('confirmPayBtn').disabled = true;
+            document.querySelectorAll('.pay-type').forEach(b => b.className = 'btn btn-ghost pay-type');
+
+            document.getElementById('paymentMethodOverlay').classList.add('open');
+        }
+
+        function closePaymentMethodModal() { 
+            document.getElementById('paymentMethodOverlay').classList.remove('open'); 
+            pendingPaymentId = null; 
+        }
+
+        async function confirmProcessPayment() {
+            if (!pendingPaymentId) return;
+            const method = selectedPayType;
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = 'Processando...';
+            
+            try {
+                const user = auth.getUser();
+                const userName = user ? user.name : 'Desconhecido';
+                const payload = { 
+                    paymentId: pendingPaymentId, 
+                    paymentMethod: method,
+                    userName: userName
+                };
+
+                const res = await fetch(`${API}/api/payments/pay`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!res.ok) throw new Error(await res.text());
+                
+                toast('Pagamento recebido com sucesso!', 'success');
+                closePaymentMethodModal();
+                loadPayments();
+            } catch (e) {
+                toast('Erro: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false; btn.innerHTML = originalText;
+            }
+        }
+
+        function openCancelModal(paymentId) {
+            pendingCancelId = paymentId;
+            document.getElementById('cancelReasonInput').value = '';
+            document.getElementById('cancelPaymentOverlay').classList.add('open');
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelPaymentOverlay').classList.remove('open');
+            pendingCancelId = null;
+        }
+
+        async function confirmCancelPayment() {
+            if (!pendingCancelId) return;
+            const reason = document.getElementById('cancelReasonInput').value.trim();
+            if (!reason) { toast('Por favor, informe o motivo.', 'warning'); return; }
+
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = 'Cancelando...';
+
+            try {
+                const res = await fetch(`${API}/api/payments/${pendingCancelId}/cancel`, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cancelReason: reason })
+                });
+                if (!res.ok) throw new Error(await res.text());
+                toast('Mensalidade cancelada com sucesso.', 'success');
+                closeCancelModal();
+                loadPayments();
+            } catch (e) { 
+                toast('Erro: ' + e.message, 'error'); 
+            } finally {
+                btn.disabled = false; btn.innerHTML = originalText;
+            }
+        }
+
+                // Init
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlFilter = urlParams.get('filter');
+        if(urlFilter) {
+            document.getElementById('statusFilter').value = urlFilter;
+        }
+        loadPayments();
+    </script>
+    </body>
+
+</html>
+

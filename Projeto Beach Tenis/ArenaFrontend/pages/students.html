@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arena Beach – Alunos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="../css/modern.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon"><i class="ph-fill ph-beach-ball"></i></div>
+                <div>
+                    <h2>Arena Beach</h2><span>Gestão Esportiva</span>
+                </div>
+            </div>
+                        <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-label">Principal</div>
+                    <a href="index.html" class="nav-item"><span class="nav-icon"><i class="ph ph-chart-line-up"></i></span> Dashboard</a>
+                    <a href="students.html" class="nav-item active"><span class="nav-icon"><i class="ph ph-graduation-cap"></i></span> Alunos</a>
+                    <a href="customers.html" class="nav-item"><span class="nav-icon"><i class="ph ph-users"></i></span> Clientes</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Quadras</div>
+                    <a href="courts.html" class="nav-item"><span class="nav-icon"><i class="ph ph-map-pin"></i></span> Quadras</a>
+                    <a href="schedule.html" class="nav-item"><span class="nav-icon"><i class="ph ph-calendar-check"></i></span> Agendamentos</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Financeiro</div>
+                    <a href="payments.html" class="nav-item"><span class="nav-icon"><i class="ph ph-money"></i></span> Mensalidades</a>
+                    <a href="sales_history.html" class="nav-item"><span class="nav-icon"><i class="ph ph-receipt"></i></span> Histórico de Pagamentos</a>
+                    <a href="reports.html" class="nav-item"><span class="nav-icon"><i class="ph ph-chart-pie-slice"></i></span> Relatórios Financeiros</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Bar / PDV</div>
+                    <a href="bar.html" class="nav-item"><span class="nav-icon"><i class="ph ph-beer-stein"></i></span> PDV / Caixa</a>
+                    <a href="tabs.html" class="nav-item"><span class="nav-icon"><i class="ph ph-clipboard-text"></i></span> Comandas</a>
+                    <a href="cash_register.html" class="nav-item"><span class="nav-icon"><i class="ph ph-cash-register"></i></span> Caixa Diário</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Estoque</div>
+                    <a href="inventory.html" class="nav-item"><span class="nav-icon"><i class="ph ph-package"></i></span> Estoque</a>
+                    <a href="purchase_orders.html" class="nav-item"><span class="nav-icon"><i class="ph ph-truck"></i></span> Pedidos de Compra</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Admin</div>
+                    <a href="admin.html" class="nav-item"><span class="nav-icon"><i class="ph ph-gear"></i></span> Controle de Acesso</a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <button onclick="auth.logout()" class="btn btn-ghost" style="width:100%;color:var(--danger);display:flex;align-items:center;justify-content:center;gap:8px"><i class="ph ph-sign-out"></i> Sair</button>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <div class="main">
+            <header class="topbar">
+                <div class="flex items-center gap-3">
+                    <button class="mobile-toggle" onclick="openSidebar()"><i class="ph ph-list"></i></button>
+                    <h1>Alunos</h1>
+                </div>
+            </header>
+            <div class="page-content">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title">Gerenciar Alunos</div>
+                        <div class="page-subtitle" id="totalCount">Carregando...</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal()">+ Novo Aluno</button>
+                </div>
+
+                <div class="card">
+                    <div class="filter-bar">
+                        <input type="text" id="searchInput" class="search-input"
+                            placeholder="Buscar aluno por nome ou e-mail..." oninput="filterStudents()">
+                        <select id="planFilter" class="form-control" style="width:auto" onchange="filterStudents()">
+                            <option value="">Todos os Planos</option>
+                            <option>Basic</option>
+                            <option>Pro</option>
+                            <option>VIP</option>
+                        </select>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Aluno</th>
+                                    <th>Contato</th>
+                                    <th>Plano</th>
+                                    <th>Início</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTable">
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="loader">
+                                            <div class="spinner"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title" id="modalTitle">Novo Aluno</span>
+                <button class="modal-close" onclick="closeModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <form id="studentForm" onsubmit="saveStudent(event)">
+                <input type="hidden" id="studentId">
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Nome Completo *</label><input id="sName"
+                            class="form-control" required placeholder="João Silva"></div>
+                    <div class="form-group"><label class="form-label">Telefone *</label><input id="sPhone"
+                            class="form-control" required placeholder="(11) 99999-9999"></div>
+                </div>
+                <div class="form-group"><label class="form-label">E-mail *</label><input id="sEmail" type="email"
+                        class="form-control" required placeholder="joao@email.com"></div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Plano *</label>
+                        <select id="sPlan" class="form-control" required>
+                            <option value="">Selecionar...</option>
+                            <option>Basic</option>
+                            <option>Pro</option>
+                            <option>VIP</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Data de Início *</label><input id="sStart"
+                            type="date" class="form-control" required></div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirmOverlay">
+        <div class="modal" style="max-width:380px">
+            <div class="modal-header"><span class="modal-title">Confirmar Exclusão</span><button class="modal-close"
+                    onclick="closeConfirm()"><i class="ph ph-x"></i></button></div>
+            <p style="color:var(--text-secondary);margin-bottom:20px">Deseja realmente excluir este aluno? Esta ação não
+                pode ser desfeita.</p>
+            <div class="form-actions"><button class="btn btn-ghost" onclick="closeConfirm()">Cancelar</button><button
+                    class="btn btn-danger" id="confirmDeleteBtn">Excluir</button></div>
+        </div>
+    </div>
+
+    <!-- Finance/Payments Modal -->
+    <div class="modal-overlay" id="financeOverlay">
+        <div class="modal" style="max-width:800px">
+            <div class="modal-header">
+                <div>
+                    <span class="modal-title">Mensalidades do Aluno</span>
+                    <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;" id="financeStudentName"></div>
+                </div>
+                <button class="modal-close" onclick="closeFinanceModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="table-wrap" style="margin-top: 10px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Vencimento</th>
+                            <th>Plano</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Data Pagamento</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="financeTable">
+                        <tr><td colspan="6" style="text-align:center;padding:20px">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+        <!-- Receive Payment Modal -->
+    <div class="modal-overlay" id="paymentMethodOverlay">
+        <div class="modal" style="max-width:450px">
+            <div class="modal-header">
+                <span class="modal-title">Receber Mensalidade</span>
+                <button class="modal-close" onclick="closePaymentMethodModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <div style="background: var(--bg-tertiary); padding: 15px; border-radius: var(--radius-sm); margin-bottom: 20px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+                        <span style="color:var(--text-secondary); font-size:12px">Aluno:</span>
+                        <strong id="payStudentName" style="color:var(--text-primary)">-</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+                        <span style="color:var(--text-secondary); font-size:12px">Plano:</span>
+                        <strong id="payPlanName" style="color:var(--text-primary)">-</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+                        <span style="color:var(--text-secondary); font-size:12px">Vencimento:</span>
+                        <strong id="payDueDate" style="color:var(--text-primary)">-</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px;">
+                        <span style="color:var(--text-secondary); font-size:12px">Valor Total:</span>
+                        <strong id="paymentAmountDisplay" style="color:var(--green); font-size: 16px;">R$ 0,00</strong>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Forma de Pagamento *</label>
+                    <select id="paymentMethodSelect" class="form-control">
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="Pix">PIX</option>
+                        <option value="Cartão de Crédito">Cartão de Crédito</option>
+                        <option value="Cartão de Débito">Cartão de Débito</option>
+                        <option value="Transferência">Transferência</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-ghost" onclick="closePaymentMethodModal()">Cancelar</button>
+                <button class="btn btn-success" onclick="confirmProcessPayment()"><i class="ph-bold ph-check"></i> Confirmar Pagamento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Payment Modal -->
+    <div class="modal-overlay" id="cancelPaymentOverlay">
+        <div class="modal" style="max-width:400px">
+            <div class="modal-header">
+                <span class="modal-title" style="color:var(--red)">Cancelar Mensalidade</span>
+                <button class="modal-close" onclick="closeCancelModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <p style="color:var(--text-secondary); margin-bottom: 15px; font-size:13px">
+                    Tem certeza que deseja cancelar esta fatura? Por favor, informe o motivo do cancelamento para registro.
+                </p>
+                <div class="form-group">
+                    <label class="form-label">Motivo do Cancelamento *</label>
+                    <textarea id="cancelReasonInput" class="form-control" rows="3" placeholder="Ex: Aluno desistiu, Cobrança duplicada..."></textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-ghost" onclick="closeCancelModal()">Voltar</button>
+                <button class="btn btn-danger" onclick="confirmCancelPayment()"><i class="ph ph-trash"></i> Cancelar Fatura</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="../js/auth.js"></script>
+    <script>
+        const API = '';
+        let students = [], editingId = null;
+        const planColors = { Basic: 'blue', Pro: 'orange', VIP: 'purple' };
+
+        function toast(msg, type = 'info') {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div'); t.className = `toast ${type}`;
+            t.innerHTML = `<i class="ph-bold ${type === 'success' ? 'ph-check-circle' : type === 'error' ? 'ph-x-circle' : 'ph-info'}"></i><span>${msg}</span>`;
+            c.appendChild(t); setTimeout(() => t.remove(), 4000);
+        }
+        function openSidebar() { document.getElementById('sidebar').classList.add('mobile-open'); document.getElementById('sidebarOverlay').classList.add('visible'); }
+        function closeSidebar() { document.getElementById('sidebar').classList.remove('mobile-open'); document.getElementById('sidebarOverlay').classList.remove('visible'); }
+
+        function openModal(id = null) {
+            editingId = id;
+            document.getElementById('modalTitle').textContent = id ? 'Editar Aluno' : 'Novo Aluno';
+            document.getElementById('studentForm').reset();
+            document.getElementById('studentId').value = '';
+            if (id) {
+                const s = students.find(x => x.id === id);
+                if (s) {
+                    document.getElementById('studentId').value = s.id;
+                    document.getElementById('sName').value = s.name;
+                    document.getElementById('sPhone').value = s.phone;
+                    document.getElementById('sEmail').value = s.email;
+                    document.getElementById('sPlan').value = s.planName;
+                    document.getElementById('sStart').value = s.startDate?.slice(0, 10);
+                }
+            }
+            document.getElementById('modalOverlay').classList.add('open');
+        }
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+        function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); }
+
+        async function loadStudents() {
+            try {
+                students = await fetch(`${API}/api/students`).then(r => r.json());
+                console.log("Students loaded:", students);
+                renderStudents(students);
+            } catch (e) { toast('Erro ao carregar alunos', 'error'); }
+        }
+
+        function initials(name) { return name ? name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() : 'UI'; }
+
+        function renderStudents(list) {
+            document.getElementById('totalCount').textContent = `${list.length} aluno(s) cadastrado(s)`;
+            const tbody = document.getElementById('studentsTable');
+            if (!list.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--text-muted)">Nenhum aluno encontrado</td></tr>'; return; }
+            tbody.innerHTML = list.map(s => `
+    <tr>
+      <td><div class="flex items-center gap-3">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">${initials(s.name)}</div>
+        <div><div style="font-weight:600;color:var(--text-primary)">${s.name}</div><div style="font-size:11px;color:var(--text-muted)">${s.email}</div></div>
+      </div></td>
+      <td>${s.phone}</td>
+      <td><span class="badge badge-${planColors[s.planName] || 'gray'}">${s.planName}</span></td>
+      <td>${new Date(s.startDate).toLocaleDateString('pt-BR')}</td>
+      <td class="flex gap-2">
+        <button class="btn btn-ghost btn-sm" onclick="openFinanceModal(${s.id}, '${s.name}')" title="Mensalidades"><i class="ph ph-currency-dollar"></i></button>
+        <button class="btn btn-ghost btn-sm" onclick="openModal(${s.id})"><i class="ph ph-pencil"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDelete(${s.id})"><i class="ph ph-trash"></i></button>
+      </td>
+    </tr>`).join('');
+        }
+
+        function filterStudents() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const plan = document.getElementById('planFilter').value;
+            renderStudents(students.filter(s =>
+                (!q || s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q)) &&
+                (!plan || s.planName === plan)
+            ));
+        }
+
+        async function saveStudent(e) {
+            e.preventDefault();
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true; btn.textContent = 'Salvando...';
+            const id = document.getElementById('studentId').value;
+            const body = { name: document.getElementById('sName').value, phone: document.getElementById('sPhone').value, email: document.getElementById('sEmail').value, planName: document.getElementById('sPlan').value, startDate: document.getElementById('sStart').value };
+            try {
+                const url = id ? `${API}/api/students/${id}` : `${API}/api/students`;
+                const method = id ? 'PUT' : 'POST';
+                if (id) body.id = parseInt(id);
+                const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                if (!res.ok) throw new Error(await res.text());
+                toast(id ? 'Aluno atualizado!' : 'Aluno cadastrado!', 'success');
+                closeModal(); loadStudents();
+            } catch (err) { toast('Erro: ' + err.message, 'error'); }
+            finally { btn.disabled = false; btn.textContent = 'Salvar'; }
+        }
+
+        let deleteId = null;
+        function confirmDelete(id) {
+            deleteId = id;
+            document.getElementById('confirmDeleteBtn').onclick = doDelete;
+            document.getElementById('confirmOverlay').classList.add('open');
+        }
+        async function doDelete() {
+            try {
+                await fetch(`${API}/api/students/${deleteId}`, { method: 'DELETE' });
+                toast('Aluno excluído.', 'success'); closeConfirm(); loadStudents();
+            } catch (e) { toast('Erro ao excluir', 'error'); }
+        }
+
+        // --- FINANCE LOGIC ---
+        let currentFinanceStudentId = null;
+
+        function closeFinanceModal() {
+            document.getElementById('financeOverlay').classList.remove('open');
+        }
+
+        function getStatusBadge(status) {
+            if (status === 'Paid') return '<span class="badge badge-green">Pago</span>';
+            if (status === 'Pending') return '<span class="badge badge-yellow">Pendente</span>';
+            if (status === 'Overdue') return '<span class="badge badge-red">Atrasado</span>';
+            if (status === 'Cancelled') return '<span class="badge badge-gray">Cancelado</span>';
+            return `<span class="badge badge-gray">${status}</span>`;
+        }
+
+        async function openFinanceModal(studentId, studentName) {
+            currentFinanceStudentId = studentId;
+            document.getElementById('financeStudentName').textContent = studentName;
+            document.getElementById('financeTable').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px">Carregando...</td></tr>';
+            document.getElementById('financeOverlay').classList.add('open');
+            await loadStudentPayments(studentId);
+        }
+
+        async function loadStudentPayments(studentId) {
+            try {
+                const res = await fetch(`${API}/api/payments/student/${studentId}`);
+                if (!res.ok) throw new Error('Falha ao carregar pagamentos');
+                const payments = await res.json();
+                window.currentStudentPayments = payments;
+                
+                const tbody = document.getElementById('financeTable');
+                if (payments.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px">Nenhuma mensalidade encontrada.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = payments.map(p => {
+                    const isPending = p.status === 'Pending' || p.status === 'Overdue';
+                    const actions = isPending ? `
+                        <button class="btn btn-primary btn-sm" onclick="openPaymentMethodModal(${p.id})" title="Receber"><i class="ph ph-check-circle"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="openCancelModal(${p.id})" title="Cancelar"><i class="ph ph-x-circle"></i></button>
+                    ` : '';
+
+                    return `
+                        <tr>
+                            <td>${p.dueDate}</td>
+                            <td>${p.planName}</td>
+                            <td style="font-weight: 600; color: var(--green);">R$ ${p.amount.toFixed(2)}</td>
+                            <td>${getStatusBadge(p.status)}</td>
+                            <td>${p.paymentDate || '-'}</td>
+                            <td class="flex gap-2 justify-end">${actions}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (e) {
+                toast(e.message, 'error');
+                document.getElementById('financeTable').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px">Erro ao carregar.</td></tr>';
+            }
+        }
+
+        let pendingPaymentId = null;
+        let pendingCancelId = null;
+
+        function openPaymentMethodModal(paymentId) {
+            const p = window.currentStudentPayments.find(x => x.id === paymentId);
+            if(!p) return;
+            pendingPaymentId = paymentId;
+            document.getElementById('payStudentName').innerText = document.getElementById('financeStudentName').textContent;
+            document.getElementById('payPlanName').innerText = p.planName;
+            document.getElementById('payDueDate').innerText = p.dueDate;
+            document.getElementById('paymentAmountDisplay').innerText = 'R$ ' + p.amount.toFixed(2);
+            document.getElementById('paymentMethodSelect').value = 'Dinheiro';
+            document.getElementById('paymentMethodOverlay').classList.add('open');
+        }
+
+        function closePaymentMethodModal() { 
+            document.getElementById('paymentMethodOverlay').classList.remove('open'); 
+            pendingPaymentId = null; 
+        }
+
+        async function confirmProcessPayment() {
+            if (!pendingPaymentId) return;
+            const method = document.getElementById('paymentMethodSelect').value;
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = 'Processando...';
+            
+            try {
+                const user = auth.getUser();
+                const userName = user ? user.name : 'Desconhecido';
+                const payload = { 
+                    paymentId: pendingPaymentId, 
+                    paymentMethod: method,
+                    userName: userName
+                };
+
+                const res = await fetch(`${API}/api/payments/pay`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!res.ok) throw new Error(await res.text());
+                
+                toast('Pagamento recebido com sucesso!', 'success');
+                closePaymentMethodModal();
+                loadStudentPayments(currentFinanceStudentId);
+            } catch (e) {
+                toast('Erro: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false; btn.innerHTML = originalText;
+            }
+        }
+
+        function openCancelModal(paymentId) {
+            pendingCancelId = paymentId;
+            document.getElementById('cancelReasonInput').value = '';
+            document.getElementById('cancelPaymentOverlay').classList.add('open');
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelPaymentOverlay').classList.remove('open');
+            pendingCancelId = null;
+        }
+
+        async function confirmCancelPayment() {
+            if (!pendingCancelId) return;
+            const reason = document.getElementById('cancelReasonInput').value.trim();
+            if (!reason) { toast('Por favor, informe o motivo.', 'warning'); return; }
+
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = 'Cancelando...';
+
+            try {
+                const res = await fetch(`${API}/api/payments/${pendingCancelId}/cancel`, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cancelReason: reason })
+                });
+                if (!res.ok) throw new Error(await res.text());
+                toast('Mensalidade cancelada com sucesso.', 'success');
+                closeCancelModal();
+                loadStudentPayments(currentFinanceStudentId);
+            } catch (e) { 
+                toast('Erro: ' + e.message, 'error'); 
+            } finally {
+                btn.disabled = false; btn.innerHTML = originalText;
+            }
+        }
+
+        loadStudents();
+    </script>
+</body>
+</html>
+

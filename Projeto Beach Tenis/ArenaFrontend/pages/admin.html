@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arena Beach – Administração</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="../css/modern.css">
+    <style>
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--text-primary);
+            background: rgba(0, 240, 255, 0.1);
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon"><i class="ph-fill ph-beach-ball"></i></div>
+                <div>
+                    <h2>Arena Beach</h2><span>Gestão Esportiva</span>
+                </div>
+            </div>
+                        <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-label">Principal</div>
+                    <a href="index.html" class="nav-item"><span class="nav-icon"><i class="ph ph-chart-line-up"></i></span> Dashboard</a>
+                    <a href="students.html" class="nav-item"><span class="nav-icon"><i class="ph ph-graduation-cap"></i></span> Alunos</a>
+                    <a href="customers.html" class="nav-item"><span class="nav-icon"><i class="ph ph-users"></i></span> Clientes</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Quadras</div>
+                    <a href="courts.html" class="nav-item"><span class="nav-icon"><i class="ph ph-map-pin"></i></span> Quadras</a>
+                    <a href="schedule.html" class="nav-item"><span class="nav-icon"><i class="ph ph-calendar-check"></i></span> Agendamentos</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Financeiro</div>
+                    <a href="payments.html" class="nav-item"><span class="nav-icon"><i class="ph ph-money"></i></span> Mensalidades</a>
+                    <a href="sales_history.html" class="nav-item"><span class="nav-icon"><i class="ph ph-receipt"></i></span> Histórico de Pagamentos</a>
+                    <a href="reports.html" class="nav-item"><span class="nav-icon"><i class="ph ph-chart-pie-slice"></i></span> Relatórios Financeiros</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Bar / PDV</div>
+                    <a href="bar.html" class="nav-item"><span class="nav-icon"><i class="ph ph-beer-stein"></i></span> PDV / Caixa</a>
+                    <a href="tabs.html" class="nav-item"><span class="nav-icon"><i class="ph ph-clipboard-text"></i></span> Comandas</a>
+                    <a href="cash_register.html" class="nav-item"><span class="nav-icon"><i class="ph ph-cash-register"></i></span> Caixa Diário</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Estoque</div>
+                    <a href="inventory.html" class="nav-item"><span class="nav-icon"><i class="ph ph-package"></i></span> Estoque</a>
+                    <a href="purchase_orders.html" class="nav-item"><span class="nav-icon"><i class="ph ph-truck"></i></span> Pedidos de Compra</a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Admin</div>
+                    <a href="admin.html" class="nav-item active"><span class="nav-icon"><i class="ph ph-gear"></i></span> Controle de Acesso</a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <button onclick="auth.logout()" class="btn btn-ghost"
+                    style="width:100%;color:var(--danger);display:flex;align-items:center;justify-content:center;gap:8px"><i
+                        class="ph ph-sign-out"></i> Sair</button>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <div class="main">
+            <header class="topbar">
+                <div class="flex items-center gap-3">
+                    <button class="mobile-toggle" onclick="openSidebar()"><i class="ph ph-list"></i></button>
+                    <h1>Administração do Sistema</h1>
+                </div>
+                <div class="topbar-right">
+                    <!-- Topbar actions -->
+                </div>
+            </header>
+
+            <div class="page-content">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('users')">Usuários do Sistema</button>
+                    <button class="tab-btn" onclick="switchTab('roles')">Perfis e Permissões</button>
+                    <button class="tab-btn" onclick="switchTab('employees')">Funcionários na Arena</button>
+                </div>
+
+                <!-- USERS TAB -->
+                <div id="usersTab" class="tab-content active">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Gerenciar Usuários</span>
+                            <button class="btn btn-primary btn-sm" onclick="openUserModal()">+ Novo Usuário</button>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome</th>
+                                        <th>Usuário</th>
+                                        <th>Perfil</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROLES TAB -->
+                <div id="rolesTab" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Regras de Acesso</span>
+                            <button class="btn btn-primary btn-sm" onclick="createNewRole()">+ Novo Perfil</button>
+                        </div>
+                        <p style="color:var(--text-muted);font-size:14px;margin-bottom:15px">Selecione um perfil de
+                            usuário e defina quais telas ele pode acessar.</p>
+
+                        <div class="grid-2">
+                            <div>
+                                <label class="form-label">Perfil</label>
+                                <select id="roleSelector" class="form-control"
+                                    onchange="loadRolePermissions()"></select>
+                            </div>
+                            <div style="display:flex;align-items:flex-end">
+                                <button class="btn btn-success" onclick="saveRolePermissions()">Salvar Permissões do
+                                    Perfil</button>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:20px;display:grid;grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));gap:15px"
+                            id="permissionsGrid">
+                            <!-- Checkboxes rendered dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EMPLOYEES TAB -->
+                <div id="employeesTab" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Gerenciar Funcionários</span>
+                            <button class="btn btn-primary btn-sm" onclick="openEmployeeModal()">+ Novo
+                                Funcionário</button>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Telefone/Email</th>
+                                        <th>Cargo/Perfil</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employeesTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal">
+            <div class="modal-header"><span class="modal-title" id="userModalTitle">Novo Usuário</span><button
+                    class="modal-close" onclick="closeUserModal()">✕</button></div>
+            <form onsubmit="saveUser(event)">
+                <input type="hidden" id="uId">
+                <div class="form-group"><label class="form-label">Nome *</label><input id="uName" class="form-control"
+                        required placeholder="Nome completo"></div>
+                <div class="form-group"><label class="form-label">Usuário *</label><input id="uUsername"
+                        class="form-control" required placeholder="login do usuário"></div>
+                <div class="form-group"><label class="form-label">Senha *</label><input id="uPassword" type="password"
+                        class="form-control" placeholder="Senha"></div>
+                <div class="form-group"><label class="form-label">Perfil *</label>
+                    <select id="uRole" class="form-control" required>
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+                <div class="form-actions"><button type="button" class="btn btn-ghost"
+                        onclick="closeUserModal()">Cancelar</button><button type="submit"
+                        class="btn btn-primary">Salvar</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Employee Modal -->
+    <div class="modal-overlay" id="employeeModal">
+        <div class="modal">
+            <div class="modal-header"><span class="modal-title" id="empModalTitle">Novo Funcionário</span><button
+                    class="modal-close" onclick="closeEmployeeModal()">✕</button></div>
+            <form onsubmit="saveEmployee(event)">
+                <input type="hidden" id="eId">
+                <div class="form-group"><label class="form-label">Nome *</label><input id="eName" class="form-control"
+                        required></div>
+                <div class="form-group"><label class="form-label">Telefone</label><input id="ePhone"
+                        class="form-control"></div>
+                <div class="form-group"><label class="form-label">Email</label><input id="eEmail" type="email"
+                        class="form-control"></div>
+                <div class="form-group"><label class="form-label">Usuário</label><input id="eUsername"
+                        class="form-control" placeholder="Usado para login (opcional)"></div>
+                <div class="form-group"><label class="form-label">Senha</label><input id="ePassword" type="password"
+                        class="form-control" placeholder="Senha de login (opcional)"></div>
+                <div class="form-group"><label class="form-label">Perfil / Cargo *</label>
+                    <select id="eRole" class="form-control" required>
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+                <label class="flex items-center gap-2" style="cursor:pointer;margin-bottom:15px"><input type="checkbox"
+                        id="eActive" checked> Ativo</label>
+                <div class="form-actions"><button type="button" class="btn btn-ghost"
+                        onclick="closeEmployeeModal()">Cancelar</button><button type="submit"
+                        class="btn btn-primary">Salvar</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="../js/auth.js"></script>
+    <script>
+        const API = window.location.origin.includes('localhost:5151') ? '/api' : 'http://localhost:5151/api';
+
+        function toast(msg, type = 'info') { const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = `toast ${type}`; t.innerHTML = `<i class="ph-bold ${type === 'success' ? 'ph-check-circle' : type === 'error' ? 'ph-x-circle' : 'ph-info'}"></i><span>${msg}</span>`; c.appendChild(t); setTimeout(() => t.remove(), 4000); }
+        function openSidebar() { document.getElementById('sidebar').classList.add('mobile-open'); document.getElementById('sidebarOverlay').classList.add('visible'); }
+        function closeSidebar() { document.getElementById('sidebar').classList.remove('mobile-open'); document.getElementById('sidebarOverlay').classList.remove('visible'); }
+
+        // Ensure user is admin
+        if (!auth.hasPermission('Admin') && !auth.hasPermission('Administrador')) {
+            alert('Acesso negado. Você não é administrador.');
+            window.location.href = 'index.html';
+        }
+
+        function switchTab(tabId, targetEl = null) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId + 'Tab').classList.add('active');
+
+            if (targetEl) {
+                targetEl.classList.add('active');
+            } else if (window.event && window.event.target && window.event.target.classList) {
+                window.event.target.classList.add('active');
+            } else {
+                // Try to locate the button based on onClick attribute
+                const btn = document.querySelector(`.tab-btn[onclick="switchTab('${tabId}')"]`);
+                if (btn) btn.classList.add('active');
+            }
+
+            if (tabId === 'users') loadUsers();
+            if (tabId === 'roles') loadRolesAndPermissions();
+            if (tabId === 'employees') loadEmployees();
+        }
+
+        let allRoles = [];
+        let allPermissions = [];
+
+        async function loadUsers() {
+            try {
+                const users = await fetch(`${API}/admin/users`).then(r => r.json());
+                document.getElementById('usersTable').innerHTML = users.map(u => `
+                    <tr>
+                        <td>#${u.id}</td>
+                        <td style="font-weight:600">${u.name}</td>
+                        <td>${u.username}</td>
+                        <td><span class="badge badge-purple">${u.roleName || 'Sem Perfil'}</span></td>
+                        <td>${u.active ? '<span class="badge badge-green">Ativo</span>' : '<span class="badge badge-red">Inativo</span>'}</td>
+                        <td><button class="btn btn-ghost btn-sm" onclick="toast('Visualizar usuário em dev')">Editar</button></td>
+                    </tr>
+                `).join('');
+            } catch (e) { toast('Erro ao carregar usuários', 'error'); }
+        }
+
+        async function loadRolesAndPermissions() {
+            try {
+                allRoles = await fetch(`${API}/admin/roles`).then(r => r.json());
+                allPermissions = await fetch(`${API}/admin/permissions`).then(r => r.json());
+
+                const sel = document.getElementById('roleSelector');
+                sel.innerHTML = '<option value="">-- Selecione Perfil --</option>' +
+                    allRoles.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+
+                document.getElementById('permissionsGrid').innerHTML = allPermissions.map(p => `
+                    <label style="display:flex;align-items:center;gap:8px;background:var(--bg-tertiary);padding:10px;border-radius:var(--radius-sm);border:1px solid var(--border-light);cursor:pointer;">
+                        <input type="checkbox" class="perm-chk" value="${p.id}" data-name="${p.name}">
+                        <span style="font-size:14px">${p.screen} (${p.name})</span>
+                    </label>
+                `).join('');
+            } catch (e) { toast('Erro ao carregar dados de acesso', 'error'); }
+        }
+
+        function loadRolePermissions() {
+            const rid = document.getElementById('roleSelector').value;
+            if (!rid) return;
+            const role = allRoles.find(r => r.id == rid);
+            document.querySelectorAll('.perm-chk').forEach(chk => {
+                chk.checked = role.permissions.includes(chk.dataset.name);
+            });
+        }
+
+        async function saveRolePermissions() {
+            const rid = document.getElementById('roleSelector').value;
+            if (!rid) { toast('Selecione um perfil primeiro', 'warning'); return; }
+            const checked = Array.from(document.querySelectorAll('.perm-chk:checked')).map(c => parseInt(c.value));
+
+            try {
+                const res = await fetch(`${API}/admin/roles/${rid}/permissions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(checked)
+                });
+                if (!res.ok) throw new Error(await res.text());
+                toast('Permissões atualizadas com sucesso!', 'success');
+                // Reload data silently
+                allRoles = await fetch(`${API}/admin/roles`).then(r => r.json());
+            } catch (e) { toast('Erro: ' + e.message, 'error'); }
+        }
+
+        async function createNewRole() {
+            const roleName = prompt('Digite o nome do novo perfil:');
+            if (!roleName || !roleName.trim()) return;
+            try {
+                const res = await fetch(`${API}/admin/roles`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: roleName.trim() })
+                });
+                if (!res.ok) {
+                    const data = await res.json().catch(() => ({}));
+                    throw new Error(data.message || 'Erro ao criar perfil');
+                }
+                toast('Perfil criado com sucesso!', 'success');
+                loadRolesAndPermissions();
+            } catch (err) {
+                toast(err.message, 'error');
+            }
+        }
+
+        async function loadEmployees() {
+            try {
+                const emps = await fetch(`${API}/employees`).then(r => r.json());
+                document.getElementById('employeesTable').innerHTML = emps.map(e => `
+                    <tr>
+                        <td style="font-weight:600">${e.name}</td>
+                        <td><div style="font-size:13px">${e.phone || '-'}</div><div style="font-size:12px;color:var(--text-muted)">${e.email || '-'}</div></td>
+                        <td><span class="badge badge-purple">${e.roleName || '-'}</span></td>
+                        <td>${e.active ? '<span class="badge badge-green">Ativo</span>' : '<span class="badge badge-gray">Inativo</span>'}</td>
+                        <td class="flex gap-2">
+                            <button class="btn btn-ghost btn-sm" onclick="openEmployeeModalForEdit(${e.id}, '${e.name.replace(/'/g, "\\'")}', '${e.phone || ''}', '${e.email || ''}', '${e.username || ''}', ${e.roleId || 0}, ${e.active})"><i class="ph ph-pencil"></i></button>
+                            <button class="btn btn-ghost btn-sm" onclick="deleteEmployee(${e.id})" style="color:var(--danger)"><i class="ph ph-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { toast('Erro ao listar funcionários', 'error'); }
+        }
+
+        async function deleteEmployee(id) {
+            if (!confirm('Deseja realmente remover este funcionário?')) return;
+            try {
+                const res = await fetch(`${API}/employees/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error("Erro ao remover funcionário");
+                toast('Funcionário removido com sucesso!', 'success');
+                loadEmployees();
+            } catch (err) { toast(err.message, 'error'); }
+        }
+
+        async function openUserModal() {
+            if (allRoles.length === 0) { try { allRoles = await fetch(`${API}/admin/roles`).then(r => r.json()); } catch (e) { } }
+            document.getElementById('uId').value = '';
+            document.getElementById('uName').value = '';
+            document.getElementById('uUsername').value = '';
+            document.getElementById('uPassword').value = '';
+            document.getElementById('uRole').innerHTML = '<option value="">Selecione...</option>' + allRoles.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+            document.getElementById('uRole').value = '';
+            document.getElementById('userModal').classList.add('open');
+        }
+        function closeUserModal() { document.getElementById('userModal').classList.remove('open'); }
+
+        async function saveUser(e) {
+            e.preventDefault();
+            const body = {
+                name: document.getElementById('uName').value,
+                username: document.getElementById('uUsername').value,
+                roleId: parseInt(document.getElementById('uRole').value),
+                password: document.getElementById('uPassword').value || '123456'
+            };
+            try {
+                const res = await fetch(`${API}/auth/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                if (!res.ok) throw new Error("Erro ao criar usuário");
+                toast('Usuário salvo com sucesso!', 'success'); closeUserModal(); loadUsers();
+            } catch (err) { toast(err.message, 'error'); }
+        }
+
+        async function openEmployeeModal() {
+            if (allRoles.length === 0) { try { allRoles = await fetch(`${API}/admin/roles`).then(r => r.json()); } catch (e) { } }
+            document.getElementById('eId').value = '';
+            document.getElementById('eName').value = '';
+            document.getElementById('ePhone').value = '';
+            document.getElementById('eEmail').value = '';
+            document.getElementById('eUsername').value = '';
+            document.getElementById('ePassword').value = '';
+            document.getElementById('eRole').innerHTML = '<option value="">Selecione...</option>' + allRoles.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+            document.getElementById('eRole').value = '';
+            document.getElementById('eActive').checked = true;
+            document.getElementById('empModalTitle').textContent = 'Novo Funcionário';
+            document.getElementById('employeeModal').classList.add('open');
+        }
+
+        async function openEmployeeModalForEdit(id, name, phone, email, username, roleId, active) {
+            if (allRoles.length === 0) { try { allRoles = await fetch(`${API}/admin/roles`).then(r => r.json()); } catch (e) { } }
+            document.getElementById('eId').value = id;
+            document.getElementById('eName').value = name;
+            document.getElementById('ePhone').value = phone;
+            document.getElementById('eEmail').value = email;
+            document.getElementById('eUsername').value = username;
+            document.getElementById('ePassword').value = ''; // Don't retrieve hash
+            document.getElementById('eRole').innerHTML = '<option value="">Selecione...</option>' + allRoles.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+            document.getElementById('eRole').value = roleId || '';
+            document.getElementById('eActive').checked = active;
+            document.getElementById('empModalTitle').textContent = 'Editar Funcionário';
+            document.getElementById('employeeModal').classList.add('open');
+        }
+
+        function closeEmployeeModal() { document.getElementById('employeeModal').classList.remove('open'); }
+
+        async function saveEmployee(e) {
+            e.preventDefault();
+            const id = document.getElementById('eId').value;
+            const body = {
+                name: document.getElementById('eName').value,
+                phone: document.getElementById('ePhone').value,
+                email: document.getElementById('eEmail').value,
+                username: document.getElementById('eUsername').value,
+                password: document.getElementById('ePassword').value,
+                roleId: parseInt(document.getElementById('eRole').value),
+                active: document.getElementById('eActive').checked
+            };
+            if (id) body.id = parseInt(id);
+            try {
+                const res = await fetch(`${API}/employees${id ? '/' + id : ''}`, {
+                    method: id ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                if (!res.ok) throw new Error("Erro ao salvar funcionário");
+                toast('Funcionário salvo com sucesso!', 'success'); closeEmployeeModal(); loadEmployees();
+            } catch (err) { toast(err.message, 'error'); }
+        }
+
+        // Init initial tab
+        const hash = window.location.hash.substring(1);
+        if (hash === 'employees' || hash === 'roles' || hash === 'users') {
+            switchTab(hash);
+        } else {
+            switchTab('users');
+        }
+    </script>
+</body>
+
+</html>
+

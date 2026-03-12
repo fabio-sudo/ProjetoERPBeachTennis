@@ -1,0 +1,15 @@
+INSERT INTO Permissions (Name, Screen) VALUES
+('Visualizar Dashboard', 'Dashboard'),
+('Gerenciar Alunos', 'Alunos'),
+('Gerenciar Clientes', 'Clientes'),
+('Gerenciar Quadras', 'Quadras'),
+('Gerenciar Agendamentos', 'Agendamentos'),
+('Acessar PDV', 'PDV'),
+('Gerenciar Comandas', 'Comandas'),
+('Gerenciar Caixa Diário', 'Caixa Diário'),
+('Visualizar Histórico', 'Histórico'),
+('Gerenciar Estoque', 'Estoque'),
+('Gerenciar Pedidos', 'Pedidos de Compra'),
+('Visualizar Relatórios', 'Relatórios'),
+('Controle de Acesso', 'Admin'),
+('Gerenciar Funcionários', 'Funcionários');
