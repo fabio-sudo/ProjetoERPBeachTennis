@@ -67,7 +67,7 @@
                     <h1>Agendamentos</h1>
                 </div>
                 <div class="topbar-right">
-                    <button class="btn btn-primary" onclick="openModal()">+ Nova Reserva</button>
+                    <button class="btn btn-primary" onclick="openResModal()">+ Nova Reserva</button>
                 </div>
             </header>
             <div class="page-content">
@@ -123,7 +123,7 @@
     <div class="modal-overlay" id="resModal">
         <div class="modal">
             <div class="modal-header"><span class="modal-title" id="resModalTitle">Nova Reserva</span><button
-                    class="modal-close" onclick="closeModal()"><i class="ph ph-x"></i></button></div>
+                    class="modal-close" onclick="closeResModal()"><i class="ph ph-x"></i></button></div>
             <form onsubmit="saveReservation(event)">
                 <input type="hidden" id="resId">
                 <div class="form-row">
@@ -143,10 +143,10 @@
                     <div class="form-group"><label class="form-label">Fim *</label><input id="rEnd" type="time"
                             class="form-control" required></div>
                 </div>
-                <div class="form-group"><label class="form-label">Preço (R$) *</label><input id="rPrice" type="number"
-                        step="0.01" class="form-control" required placeholder="0,00"></div>
+                <div class="form-group"><label class="form-label">Preço (R$) *</label><input id="rPrice" type="text"
+                        class="form-control" required placeholder="R$ 0,00"></div>
                 <div class="form-actions">
-                    <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+                    <button type="button" class="btn btn-ghost" onclick="closeResModal()">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
                 </div>
             </form>
@@ -211,6 +211,9 @@
         }
 
         async function init() {
+            if (typeof applyCurrencyMask !== 'undefined') {
+                applyCurrencyMask(document.getElementById('rPrice'));
+            }
             try {
                 courts = await fetch(`${API}/api/courts`).then(r => r.json());
                 const courtSel = document.getElementById('filterCourt');
@@ -261,7 +264,7 @@
                     `<button class="btn btn-ghost btn-sm" disabled><i class="ph ph-check"></i></button>
                      <button class="btn btn-danger btn-sm" onclick="confirmDelete(${r.id})" title="Cancelar Agendamento Pago"><i class="ph ph-trash"></i></button>` :
                     `<button class="btn btn-success btn-sm" onclick="openCheckoutModal(${r.id})" title="Pagar e Finalizar"><i class="ph ph-currency-dollar"></i></button>
-                   <button class="btn btn-ghost btn-sm" onclick="openModal(${r.id})" title="Editar"><i class="ph ph-pencil"></i></button>
+                   <button class="btn btn-ghost btn-sm" onclick="openResModal(${r.id})" title="Editar"><i class="ph ph-pencil"></i></button>
                    <button class="btn btn-danger btn-sm" onclick="confirmDelete(${r.id})" title="Cancelar"><i class="ph ph-trash"></i></button>`;
 
                 return `<tr>
@@ -277,7 +280,8 @@
             }).join('');
         }
 
-        function openModal(id = null) {
+        function openResModal(id = null) {
+            if (typeof id !== 'number' && typeof id !== 'string') id = null;
             document.getElementById('resId').value = id || '';
             document.getElementById('resModalTitle').textContent = id ? 'Editar Reserva' : 'Nova Reserva';
             const rCourt = document.getElementById('rCourt');
@@ -293,23 +297,24 @@
                     document.getElementById('rCustomer').value = r.customerName;
                     document.getElementById('rStart').value = r.startTime?.slice(0, 5);
                     document.getElementById('rEnd').value = r.endTime?.slice(0, 5);
-                    document.getElementById('rPrice').value = r.price;
+                    document.getElementById('rPrice').value = (r.price || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 }
             }
             document.getElementById('resModal').classList.add('open');
         }
-        function closeModal() { document.getElementById('resModal').classList.remove('open'); }
+        function closeResModal() { document.getElementById('resModal').classList.remove('open'); }
 
         async function saveReservation(e) {
             e.preventDefault();
             const id = document.getElementById('resId').value;
-            const body = { courtId: parseInt(document.getElementById('rCourt').value), customerName: document.getElementById('rCustomer').value, reservationDate: document.getElementById('rDate').value, startTime: document.getElementById('rStart').value + ':00', endTime: document.getElementById('rEnd').value + ':00', price: parseFloat(document.getElementById('rPrice').value) };
+            const priceVal = typeof getUnmaskedCurrency !== 'undefined' ? getUnmaskedCurrency(document.getElementById('rPrice').value) : parseFloat(document.getElementById('rPrice').value);
+            const body = { courtId: parseInt(document.getElementById('rCourt').value), customerName: document.getElementById('rCustomer').value, reservationDate: document.getElementById('rDate').value, startTime: document.getElementById('rStart').value + ':00', endTime: document.getElementById('rEnd').value + ':00', price: priceVal };
             if (id) body.id = parseInt(id);
             try {
                 const res = await fetch(`${API}/api/reservations${id ? '/' + id : ''}`, { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
                 if (!res.ok) throw new Error(await res.text());
                 toast(id ? 'Reserva atualizada!' : 'Reserva criada!', 'success');
-                closeModal(); loadReservations();
+                closeResModal(); loadReservations();
             } catch (err) { toast('Erro: ' + err.message, 'error'); }
         }
 
@@ -365,6 +370,7 @@
 
         init();
     </script>
+    <script src="../js/app.js"></script>
     <script src="../js/auth.js"></script>
 </body>
 

@@ -1,25 +1,25 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Admin\\Desktop\\Projeto Beach Tenis\\",
+  "WorkspaceRootPath": "C:\\Users\\Admin\\Desktop\\ProjetoERPBeachTennis\\Projeto Beach Tenis\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{89B5C3DE-58BD-4FFC-8DA7-6912DC9DAD41}|ArenaBackend\\ArenaBackend.csproj|c:\\users\\admin\\desktop\\projeto beach tenis\\arenabackend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{89B5C3DE-58BD-4FFC-8DA7-6912DC9DAD41}|ArenaBackend\\ArenaBackend.csproj|c:\\users\\admin\\desktop\\projetoerpbeachtennis\\projeto beach tenis\\arenabackend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{89B5C3DE-58BD-4FFC-8DA7-6912DC9DAD41}|ArenaBackend\\ArenaBackend.csproj|solutionrelative:arenabackend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{89B5C3DE-58BD-4FFC-8DA7-6912DC9DAD41}|ArenaBackend\\ArenaBackend.csproj|c:\\users\\admin\\desktop\\projeto beach tenis\\arenabackend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{89B5C3DE-58BD-4FFC-8DA7-6912DC9DAD41}|ArenaBackend\\ArenaBackend.csproj|c:\\users\\admin\\desktop\\projetoerpbeachtennis\\projeto beach tenis\\arenabackend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{89B5C3DE-58BD-4FFC-8DA7-6912DC9DAD41}|ArenaBackend\\ArenaBackend.csproj|solutionrelative:arenabackend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{89B5C3DE-58BD-4FFC-8DA7-6912DC9DAD41}|ArenaBackend\\ArenaBackend.csproj|c:\\users\\admin\\desktop\\projeto beach tenis\\arenabackend\\dtos\\authdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{89B5C3DE-58BD-4FFC-8DA7-6912DC9DAD41}|ArenaBackend\\ArenaBackend.csproj|c:\\users\\admin\\desktop\\projetoerpbeachtennis\\projeto beach tenis\\arenabackend\\dtos\\authdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{89B5C3DE-58BD-4FFC-8DA7-6912DC9DAD41}|ArenaBackend\\ArenaBackend.csproj|solutionrelative:arenabackend\\dtos\\authdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-47A8-B9C0-D1E2F3A4B5C6}|Database{A1B2C3D4-E5F6-47A8-B9C0-D1E2F3A4B5C6}|C:\\Users\\Admin\\Desktop\\Projeto Beach Tenis\\Database\\schema.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}",
+      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-47A8-B9C0-D1E2F3A4B5C6}|Database{A1B2C3D4-E5F6-47A8-B9C0-D1E2F3A4B5C6}|C:\\Users\\Admin\\Desktop\\ProjetoERPBeachTennis\\Projeto Beach Tenis\\Database\\schema.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}",
       "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-47A8-B9C0-D1E2F3A4B5C6}|Database{A1B2C3D4-E5F6-47A8-B9C0-D1E2F3A4B5C6}|solutionrelative:Database\\schema.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{89B5C3DE-58BD-4FFC-8DA7-6912DC9DAD41}|ArenaBackend\\ArenaBackend.csproj|c:\\users\\admin\\desktop\\projeto beach tenis\\arenabackend\\middlewares\\globalexceptionmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{89B5C3DE-58BD-4FFC-8DA7-6912DC9DAD41}|ArenaBackend\\ArenaBackend.csproj|c:\\users\\admin\\desktop\\projetoerpbeachtennis\\projeto beach tenis\\arenabackend\\middlewares\\globalexceptionmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{89B5C3DE-58BD-4FFC-8DA7-6912DC9DAD41}|ArenaBackend\\ArenaBackend.csproj|solutionrelative:arenabackend\\middlewares\\globalexceptionmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -48,11 +48,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\Projeto Beach Tenis\\ArenaBackend\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\ProjetoERPBeachTennis\\Projeto Beach Tenis\\ArenaBackend\\Program.cs",
               "RelativeDocumentMoniker": "ArenaBackend\\Program.cs",
-              "ToolTip": "C:\\Users\\Admin\\Desktop\\Projeto Beach Tenis\\ArenaBackend\\Program.cs",
+              "ToolTip": "C:\\Users\\Admin\\Desktop\\ProjetoERPBeachTennis\\Projeto Beach Tenis\\ArenaBackend\\Program.cs",
               "RelativeToolTip": "ArenaBackend\\Program.cs",
-              "ViewState": "AgIAAIMAAAAAAAAAAAAnwI4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAGIAAAAAAAAAAAAjwI4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-10T16:22:26.634Z",
               "EditorCaption": ""
@@ -61,9 +61,9 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "User.cs",
-              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\Projeto Beach Tenis\\ArenaBackend\\Models\\User.cs",
+              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\ProjetoERPBeachTennis\\Projeto Beach Tenis\\ArenaBackend\\Models\\User.cs",
               "RelativeDocumentMoniker": "ArenaBackend\\Models\\User.cs",
-              "ToolTip": "C:\\Users\\Admin\\Desktop\\Projeto Beach Tenis\\ArenaBackend\\Models\\User.cs",
+              "ToolTip": "C:\\Users\\Admin\\Desktop\\ProjetoERPBeachTennis\\Projeto Beach Tenis\\ArenaBackend\\Models\\User.cs",
               "RelativeToolTip": "ArenaBackend\\Models\\User.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -73,9 +73,9 @@
               "$type": "Document",
               "DocumentIndex": 3,
               "Title": "schema.sql",
-              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\Projeto Beach Tenis\\Database\\schema.sql",
+              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\ProjetoERPBeachTennis\\Projeto Beach Tenis\\Database\\schema.sql",
               "RelativeDocumentMoniker": "Database\\schema.sql",
-              "ToolTip": "C:\\Users\\Admin\\Desktop\\Projeto Beach Tenis\\Database\\schema.sql",
+              "ToolTip": "C:\\Users\\Admin\\Desktop\\ProjetoERPBeachTennis\\Projeto Beach Tenis\\Database\\schema.sql",
               "RelativeToolTip": "Database\\schema.sql",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
               "WhenOpened": "2026-03-10T16:19:36.567Z"
@@ -84,9 +84,9 @@
               "$type": "Document",
               "DocumentIndex": 4,
               "Title": "GlobalExceptionMiddleware.cs",
-              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\Projeto Beach Tenis\\ArenaBackend\\Middlewares\\GlobalExceptionMiddleware.cs",
+              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\ProjetoERPBeachTennis\\Projeto Beach Tenis\\ArenaBackend\\Middlewares\\GlobalExceptionMiddleware.cs",
               "RelativeDocumentMoniker": "ArenaBackend\\Middlewares\\GlobalExceptionMiddleware.cs",
-              "ToolTip": "C:\\Users\\Admin\\Desktop\\Projeto Beach Tenis\\ArenaBackend\\Middlewares\\GlobalExceptionMiddleware.cs",
+              "ToolTip": "C:\\Users\\Admin\\Desktop\\ProjetoERPBeachTennis\\Projeto Beach Tenis\\ArenaBackend\\Middlewares\\GlobalExceptionMiddleware.cs",
               "RelativeToolTip": "ArenaBackend\\Middlewares\\GlobalExceptionMiddleware.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -96,9 +96,9 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "AuthDtos.cs",
-              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\Projeto Beach Tenis\\ArenaBackend\\DTOs\\AuthDtos.cs",
+              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\ProjetoERPBeachTennis\\Projeto Beach Tenis\\ArenaBackend\\DTOs\\AuthDtos.cs",
               "RelativeDocumentMoniker": "ArenaBackend\\DTOs\\AuthDtos.cs",
-              "ToolTip": "C:\\Users\\Admin\\Desktop\\Projeto Beach Tenis\\ArenaBackend\\DTOs\\AuthDtos.cs",
+              "ToolTip": "C:\\Users\\Admin\\Desktop\\ProjetoERPBeachTennis\\Projeto Beach Tenis\\ArenaBackend\\DTOs\\AuthDtos.cs",
               "RelativeToolTip": "ArenaBackend\\DTOs\\AuthDtos.cs",
               "ViewState": "AgIAAAwAAAAAAAAAAAA7wAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",

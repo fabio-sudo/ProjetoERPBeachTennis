@@ -140,9 +140,9 @@
                 <label class="form-label">Forma de Pagamento</label>
                 <div class="flex gap-2" style="flex-wrap:wrap">
                     <button class="btn btn-ghost pay-type" data-pay="Dinheiro" onclick="selectPayType(this)"><i class="ph ph-money"></i> Dinheiro</button>
-                    <button class="btn btn-ghost pay-type" data-pay="Cartão de Crédito" onclick="selectPayType(this)"><i class="ph ph-credit-card"></i> Crédito</button>
-                    <button class="btn btn-ghost pay-type" data-pay="Cartão de Débito" onclick="selectPayType(this)"><i class="ph ph-credit-card"></i> Débito</button>
-                    <button class="btn btn-ghost pay-type" data-pay="Pix" onclick="selectPayType(this)"><i class="ph ph-lightning"></i> PIX</button>
+                    <button class="btn btn-ghost pay-type" data-pay="Cartão Crédito" onclick="selectPayType(this)"><i class="ph ph-credit-card"></i> Crédito</button>
+                    <button class="btn btn-ghost pay-type" data-pay="Cartão Débito" onclick="selectPayType(this)"><i class="ph ph-credit-card"></i> Débito</button>
+                    <button class="btn btn-ghost pay-type" data-pay="PIX" onclick="selectPayType(this)"><i class="ph ph-lightning"></i> PIX</button>
                 </div>
             </div>
 
@@ -196,7 +196,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Valor (R$) *</label>
-                        <input id="pAmount" type="number" step="0.01" class="form-control" required placeholder="0.00">
+                        <input id="pAmount" type="text" class="form-control" required placeholder="R$ 0,00">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Vencimento *</label>
@@ -212,6 +212,7 @@
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
+    <script src="../js/app.js"></script>
     <script src="../js/auth.js"></script>
     <script>
         const API = '';
@@ -240,7 +241,7 @@
                 const p = payments.find(x => x.id === id);
                 if (p) {
                     document.getElementById('pId').value = p.id;
-                    document.getElementById('pAmount').value = p.amount;
+                    document.getElementById('pAmount').value = typeof formatCurrency !== 'undefined' ? formatCurrency(p.amount) : p.amount;
                     document.getElementById('pDueDate').value = p.dueDate;
                     
                     // Se for edição, vamos bloquear a escolha do aluno (mostra apenas como read-only)
@@ -330,7 +331,7 @@
             
             const id = document.getElementById('pId').value;
             let body = {
-                amount: parseFloat(document.getElementById('pAmount').value),
+                amount: getUnmaskedCurrency(document.getElementById('pAmount').value),
                 dueDate: document.getElementById('pDueDate').value
             };
 
@@ -467,6 +468,11 @@
         if(urlFilter) {
             document.getElementById('statusFilter').value = urlFilter;
         }
+        document.addEventListener('DOMContentLoaded', () => {
+            if(typeof applyCurrencyMask !== 'undefined') {
+                applyCurrencyMask(document.getElementById('pAmount'));
+            }
+        });
         loadPayments();
     </script>
     </body>

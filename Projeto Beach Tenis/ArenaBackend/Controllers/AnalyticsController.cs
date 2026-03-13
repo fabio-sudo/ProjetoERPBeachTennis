@@ -65,5 +65,13 @@ namespace ArenaBackend.Controllers
             var data = await _analyticsService.GetBillingMetricsAsync();
             return Ok(data);
         }
+
+        // GET: api/analytics/payment-history
+        [HttpGet("payment-history")]
+        public async Task<IActionResult> GetPaymentHistory()
+        {
+            var data = await _analyticsService.GetPaymentHistoryAsync();
+            return Ok(data);
+        }
     }
 }

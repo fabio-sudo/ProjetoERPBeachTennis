@@ -27,9 +27,29 @@ namespace ArenaBackend.Services
                 .Where(s => s.SaleDate >= today)
                 .SumAsync(s => (decimal?)s.TotalAmount) ?? 0;
 
+            var resToday = await _context.Reservations
+                .Where(r => r.ReservationDate >= today && r.Status == "Finalizado")
+                .SumAsync(r => (decimal?)r.Price) ?? 0;
+
+            var payToday = await _context.StudentPayments
+                .Where(p => p.PaymentDate >= today && p.Status == "Paid")
+                .SumAsync(p => (decimal?)p.Amount) ?? 0;
+
+            var totalToday = salesToday + resToday + payToday;
+
             var salesMonth = await _context.Sales
                 .Where(s => s.SaleDate >= firstDayOfMonth)
                 .SumAsync(s => (decimal?)s.TotalAmount) ?? 0;
+
+            var resMonth = await _context.Reservations
+                .Where(r => r.ReservationDate >= firstDayOfMonth && r.Status == "Finalizado")
+                .SumAsync(r => (decimal?)r.Price) ?? 0;
+
+            var payMonth = await _context.StudentPayments
+                .Where(p => p.PaymentDate >= firstDayOfMonth && p.Status == "Paid")
+                .SumAsync(p => (decimal?)p.Amount) ?? 0;
+
+            var totalMonth = salesMonth + resMonth + payMonth;
 
             var activeStudents = await _context.Students.CountAsync();
             var openTabs = await _context.Tabs.CountAsync(t => t.Status == "Open");
@@ -39,8 +59,8 @@ namespace ArenaBackend.Services
 
             return new DashboardSummaryDto
             {
-                SalesToday = salesToday,
-                SalesMonth = salesMonth,
+                SalesToday = totalToday,
+                SalesMonth = totalMonth,
                 ActiveStudents = activeStudents,
                 OpenTabs = openTabs,
                 LowStockProducts = lowStock,
@@ -172,6 +192,77 @@ namespace ArenaBackend.Services
                 OverduePayments = overduePayments,
                 PaymentsReceivedThisMonth = paymentsReceivedThisMonth
             };
+        }
+
+        public async Task<IEnumerable<PaymentHistoryDto>> GetPaymentHistoryAsync()
+        {
+            var history = new List<PaymentHistoryDto>();
+
+            // 1. Sales (PDV and Comandas)
+            var sales = await _context.Sales
+                .Include(s => s.Customer)
+                .Include(s => s.Student)
+                .ToListAsync();
+
+            var tabs = await _context.Tabs.ToListAsync();
+            var tabSaleIds = tabs.Where(t => t.SaleId.HasValue).Select(t => t.SaleId!.Value).ToHashSet();
+
+            foreach (var sale in sales)
+            {
+                var isComanda = tabSaleIds.Contains(sale.Id);
+                history.Add(new PaymentHistoryDto
+                {
+                    Id = sale.Id,
+                    Type = isComanda ? "Comanda" : "PDV",
+                    Date = sale.SaleDate,
+                    ClientName = sale.Student?.Name ?? sale.Customer?.Name ?? "Consumidor",
+                    PaymentType = sale.PaymentType ?? "Desconhecido",
+                    TotalAmount = sale.TotalAmount,
+                    Reference = $"Venda #{sale.Id}"
+                });
+            }
+
+            // 2. Reservations (Quadras)
+            var reservations = await _context.Reservations
+                .Where(r => r.Status == "Finalizado")
+                .ToListAsync();
+
+            foreach (var res in reservations)
+            {
+                history.Add(new PaymentHistoryDto
+                {
+                    Id = res.Id,
+                    Type = "Quadras",
+                    Date = res.ReservationDate.Date.Add(res.StartTime),
+                    ClientName = res.CustomerName ?? "-",
+                    PaymentType = res.PaymentType ?? "Desconhecido",
+                    TotalAmount = res.Price,
+                    Reference = $"Reserva #{res.Id}"
+                });
+            }
+
+            // 3. Payments (Mensalidades/Planos Avulsos)
+            var payments = await _context.StudentPayments
+                .Include(p => p.StudentSubscription).ThenInclude(ss => ss!.Student)
+                .Where(p => p.Status == "Paid")
+                .ToListAsync();
+
+            foreach (var pay in payments)
+            {
+                history.Add(new PaymentHistoryDto
+                {
+                    Id = pay.Id,
+                    Type = "Alunos",
+                    Date = pay.PaymentDate ?? pay.DueDate,
+                    ClientName = pay.StudentSubscription?.Student?.Name ?? "-",
+                    PaymentType = pay.PaymentMethod ?? "Desconhecido",
+                    TotalAmount = pay.Amount,
+                    Reference = $"Fatura #{pay.Id}"
+                });
+            }
+
+            // Order correctly (newest first)
+            return history.OrderByDescending(h => h.Date).ToList();
         }
     }
 }

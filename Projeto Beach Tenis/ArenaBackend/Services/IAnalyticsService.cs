@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ArenaBackend.DTOs;
 
 namespace ArenaBackend.Services
 {
@@ -14,5 +15,8 @@ namespace ArenaBackend.Services
 
         // Phase 4 - Recurring Billing Metrics
         Task<object> GetBillingMetricsAsync();
+
+        // Payment History
+        Task<IEnumerable<PaymentHistoryDto>> GetPaymentHistoryAsync();
     }
 }

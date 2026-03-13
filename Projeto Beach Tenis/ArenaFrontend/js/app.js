@@ -22,6 +22,49 @@ function formatCurrency(value) {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 }
 
+// Currency Mask Utilities
+function applyCurrencyMask(inputElement) {
+    if (!inputElement) return;
+    inputElement.type = 'text';
+
+    const formatValue = (val) => {
+        let numeric = parseFloat(val);
+        if (isNaN(numeric)) numeric = 0;
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(numeric);
+    };
+
+    if (inputElement.value && !inputElement.value.includes('R$')) {
+        inputElement.value = formatValue(inputElement.value);
+    }
+
+    inputElement.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value === '') {
+            e.target.value = '';
+            return;
+        }
+        value = (parseInt(value, 10) / 100).toFixed(2);
+        e.target.value = new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(value);
+    });
+}
+
+function getUnmaskedCurrency(maskedValue) {
+    if (maskedValue === undefined || maskedValue === null || maskedValue === '') return 0;
+    if (typeof maskedValue === 'number') return maskedValue;
+    
+    // Convert R$ 1.000,50 to 1000.50
+    let digitsAndComma = maskedValue.toString().replace(/[^\d,]/g, '');
+    let clean = digitsAndComma.replace(',', '.');
+    let parsed = parseFloat(clean);
+    return isNaN(parsed) ? 0 : parsed;
+}
+
 // Format Date
 function formatDate(dateStr) {
     if (!dateStr) return '-';

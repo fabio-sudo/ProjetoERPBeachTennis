@@ -122,7 +122,7 @@
                             </select>
                         </div>
                         <div class="form-group"><label class="form-label">Valor (R$)</label><input id="txAmount"
-                                type="number" step="0.01" class="form-control" placeholder="0,00"></div>
+                                type="text" class="form-control" placeholder="R$ 0,00"></div>
                         <div class="form-group"><label class="form-label">Descrição</label><input id="txDesc"
                                 class="form-control" placeholder="Ex: Compra de gelo, ajuste de troco..."></div>
                         <button class="btn btn-primary" onclick="addTransaction()" id="addTxBtn"
@@ -145,7 +145,7 @@
             <div class="modal-header"><span class="modal-title">Abrir Caixa</span><button class="modal-close"
                     onclick="document.getElementById('openCrModal').classList.remove('open')">✕</button></div>
             <div class="form-group"><label class="form-label">Saldo de Abertura (R$)</label><input id="openingAmount"
-                    type="number" step="0.01" class="form-control" placeholder="0,00" value="0"></div>
+                    type="text" class="form-control" placeholder="R$ 0,00" value="R$ 0,00"></div>
             <div class="form-actions">
                 <button class="btn btn-ghost"
                     onclick="document.getElementById('openCrModal').classList.remove('open')">Cancelar</button>
@@ -164,7 +164,7 @@
                         style="font-weight:700;color:var(--accent)" id="closeExpected">R$ 0</span></div>
             </div>
             <div class="form-group"><label class="form-label">Saldo Real Contado (R$)</label><input id="closingAmount"
-                    type="number" step="0.01" class="form-control" placeholder="0,00"></div>
+                    type="text" class="form-control" placeholder="R$ 0,00"></div>
             <div class="form-actions">
                 <button class="btn btn-ghost"
                     onclick="document.getElementById('closeCrModal').classList.remove('open')">Cancelar</button>
@@ -230,7 +230,7 @@
         }
 
         async function openCashRegister() {
-            const amt = parseFloat(document.getElementById('openingAmount').value || 0);
+            const amt = getUnmaskedCurrency(document.getElementById('openingAmount').value);
             try {
                 const res = await fetch(`${API}/api/cashregister/open`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ openingAmount: amt }) });
                 if (!res.ok) throw new Error(await res.text());
@@ -241,7 +241,7 @@
         }
 
         async function closeCashRegister() {
-            const amt = parseFloat(document.getElementById('closingAmount').value || 0);
+            const amt = getUnmaskedCurrency(document.getElementById('closingAmount').value);
             try {
                 const res = await fetch(`${API}/api/cashregister/close`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ closingAmount: amt }) });
                 if (!res.ok) throw new Error(await res.text());
@@ -253,7 +253,7 @@
 
         async function addTransaction() {
             const type = document.getElementById('txType').value;
-            const amount = parseFloat(document.getElementById('txAmount').value || 0);
+            const amount = getUnmaskedCurrency(document.getElementById('txAmount').value);
             const desc = document.getElementById('txDesc').value;
             if (!amount || amount <= 0) { toast('Informe um valor válido', 'warning'); return; }
             try {
@@ -265,8 +265,16 @@
             } catch (e) { toast('Erro: ' + e.message, 'error'); }
         }
 
+        document.addEventListener('DOMContentLoaded', () => {
+            if(typeof applyCurrencyMask !== 'undefined') {
+                applyCurrencyMask(document.getElementById('txAmount'));
+                applyCurrencyMask(document.getElementById('openingAmount'));
+                applyCurrencyMask(document.getElementById('closingAmount'));
+            }
+        });
         load();
     </script>
+    <script src="../js/app.js"></script>
     <script src="../js/auth.js"></script>
 </body>
 

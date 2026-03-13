@@ -62,14 +62,14 @@
         <div class="main">
             <header class="topbar">
                 <div class="flex items-center gap-3"><button class="mobile-toggle" onclick="openSidebar()"><i class="ph ph-list"></i></button>
-                    <h1>Histórico de Vendas</h1>
+                    <h1>Histórico de Pagamentos</h1>
                 </div>
                 <div class="topbar-right"><span style="font-weight:700;color:var(--accent)"
                         id="totalSalesDisplay">Total: R$ 0,00</span></div>
             </header>
             <div class="page-content">
                 <div class="card">
-                    <div class="filter-bar">
+                    <div class="filter-bar" style="flex-wrap: wrap;">
                         <input type="date" id="dateFrom" class="form-control" style="width:auto">
                         <input type="date" id="dateTo" class="form-control" style="width:auto">
                         <select id="payFilter" class="form-control" style="width:auto">
@@ -81,16 +81,23 @@
                         </select>
                         <button class="btn btn-primary btn-sm" onclick="loadSales()">Filtrar</button>
                     </div>
+                    <div style="padding: 1rem 1.5rem; display: flex; gap: 10px; flex-wrap: wrap; border-bottom: 1px solid var(--border);">
+                        <button class="btn btn-ghost cat-filter" data-cat="Todos" onclick="selectCatFilter(this)">Todos</button>
+                        <button class="btn btn-ghost cat-filter" data-cat="Quadras" onclick="selectCatFilter(this)"><i class="ph ph-map-pin"></i> Quadras</button>
+                        <button class="btn btn-primary cat-filter" data-cat="PDV" onclick="selectCatFilter(this)"><i class="ph ph-cash-register"></i> PDV</button>
+                        <button class="btn btn-ghost cat-filter" data-cat="Comanda" onclick="selectCatFilter(this)"><i class="ph ph-clipboard-text"></i> Comanda</button>
+                        <button class="btn btn-ghost cat-filter" data-cat="Alunos" onclick="selectCatFilter(this)"><i class="ph ph-graduation-cap"></i> Alunos</button>
+                    </div>
                     <div class="table-wrap">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th>Ref</th>
+                                    <th>Categoria</th>
                                     <th>Data</th>
                                     <th>Cliente</th>
                                     <th>Pagamento</th>
                                     <th>Total</th>
-                                    <th>Itens</th>
                                 </tr>
                             </thead>
                             <tbody id="salesTable">
@@ -178,29 +185,66 @@
         document.getElementById('dateFrom').value = today;
         document.getElementById('dateTo').value = today;
 
+        let activeCatFilter = 'PDV';
+
+        function selectCatFilter(btn) {
+            document.querySelectorAll('.cat-filter').forEach(b => {
+                b.classList.remove('btn-primary');
+                b.classList.add('btn-ghost');
+            });
+            btn.classList.remove('btn-ghost');
+            btn.classList.add('btn-primary');
+            activeCatFilter = btn.dataset.cat;
+            renderSales();
+        }
+
         async function loadSales() {
             try {
-                allSales = await fetch(`${API}/api/sales`).then(r => r.json());
-                const from = document.getElementById('dateFrom').value;
-                const to = document.getElementById('dateTo').value;
-                const pay = document.getElementById('payFilter').value;
-                let filtered = allSales;
-                if (from) filtered = filtered.filter(s => s.saleDate.slice(0, 10) >= from);
-                if (to) filtered = filtered.filter(s => s.saleDate.slice(0, 10) <= to);
-                if (pay) filtered = filtered.filter(s => s.paymentType === pay);
-                const total = filtered.reduce((s, x) => s + x.totalAmount, 0);
-                document.getElementById('totalSalesDisplay').textContent = 'Total: ' + fmt(total);
-                const tbody = document.getElementById('salesTable');
-                if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted)">Nenhuma venda no período</td></tr>'; return; }
-                tbody.innerHTML = filtered.slice().reverse().map(s => `<tr style="cursor:pointer" onclick="showSaleDetail(${s.id})">
-      <td>#${s.id}</td>
-      <td>${new Date(s.saleDate).toLocaleString('pt-BR')}</td>
-      <td>${s.customer?.name || s.student?.name || '–'}</td>
+                allSales = await fetch(`${API}/api/analytics/payment-history`).then(r => r.json());
+                renderSales();
+            } catch (e) { toast('Erro ao carregar pagamentos', 'error'); }
+        }
+
+        function renderSales() {
+            const from = document.getElementById('dateFrom').value;
+            const to = document.getElementById('dateTo').value;
+            const pay = document.getElementById('payFilter').value;
+            
+            let filtered = allSales;
+            
+            // Category Filter
+            if (activeCatFilter !== 'Todos') {
+                filtered = filtered.filter(s => s.type === activeCatFilter);
+            }
+
+            if (from) filtered = filtered.filter(s => s.date.slice(0, 10) >= from);
+            if (to) filtered = filtered.filter(s => s.date.slice(0, 10) <= to);
+            if (pay) filtered = filtered.filter(s => s.paymentType === pay);
+            
+            const total = filtered.reduce((s, x) => s + x.totalAmount, 0);
+            document.getElementById('totalSalesDisplay').textContent = 'Total: ' + fmt(total);
+            const tbody = document.getElementById('salesTable');
+            
+            if (!filtered.length) { 
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted)">Nenhum pagamento encontrado para os filtros selecionados.</td></tr>'; 
+                return; 
+            }
+            
+            const typeBadge = { 'PDV': 'badge-gray', 'Comanda': 'badge-orange', 'Quadras': 'badge-blue', 'Alunos': 'badge-purple' };
+
+            tbody.innerHTML = filtered.map(s => {
+                const isSale = s.type === 'PDV' || s.type === 'Comanda';
+                // Only make PDV/Comanda clickable for details right now (or handle others if endpoints exist)
+                const clickAttr = isSale ? `style="cursor:pointer" onclick="showSaleDetail(${s.id})"` : '';
+                return `<tr ${clickAttr}>
+      <td><span style="color:var(--text-secondary);font-size:13px">${s.reference}</span></td>
+      <td><span class="badge ${typeBadge[s.type] || 'badge-gray'}">${s.type}</span></td>
+      <td>${new Date(s.date).toLocaleString('pt-BR')}</td>
+      <td>${s.clientName}</td>
       <td><span class="badge ${payBadge[s.paymentType] || 'badge-gray'}">${s.paymentType || '–'}</span></td>
       <td style="font-weight:700;color:var(--green)">${fmt(s.totalAmount)}</td>
-      <td>${s.items?.length || 0} item(s)</td>
-    </tr>`).join('');
-            } catch (e) { toast('Erro ao carregar vendas', 'error'); }
+    </tr>`;
+            }).join('');
         }
 
         function showSaleDetail(id) {

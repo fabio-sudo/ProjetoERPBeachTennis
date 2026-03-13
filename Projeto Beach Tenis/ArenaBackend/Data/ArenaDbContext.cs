@@ -44,6 +44,12 @@ namespace ArenaBackend.Data
         public DbSet<StudentSubscription> StudentSubscriptions { get; set; }
         public DbSet<StudentPayment> StudentPayments { get; set; }
 
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            base.ConfigureConventions(configurationBuilder);
+            configurationBuilder.Properties<decimal>().HavePrecision(10, 2);
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
